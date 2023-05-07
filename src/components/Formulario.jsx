@@ -1,6 +1,7 @@
 import { useState } from "react";
+import Error from "./Error";
 
-const Formulario = ({ patient, setPatient }) => {
+const Formulario = ({ patients, setPatients }) => {
   const [name, setName] = useState("");
   const [owner, setOwner] = useState("");
   const [email, setEmail] = useState("");
@@ -8,6 +9,13 @@ const Formulario = ({ patient, setPatient }) => {
   const [symptom, setSymptom] = useState("");
 
   const [error, setError] = useState(false);
+
+  const generateId = () => {
+    const ramdom = Math.random().toString(36).substring(2);
+    const date = Date.now().toString(36);
+
+    return ramdom + date;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,8 +37,9 @@ const Formulario = ({ patient, setPatient }) => {
       email,
       date,
       symptom,
+      id: generateId(),
     };
-    setPatient([...patient, objPatient]);
+    setPatients([...patients, objPatient]);
 
     // Reiniciar el form
 
@@ -56,11 +65,7 @@ const Formulario = ({ patient, setPatient }) => {
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
       >
-        {error && (
-          <div className="bg-red-800 text-white text-center p-3 uppercase font-bold mb-3 rounded-md">
-            <p>Todos los campos son obligatorios</p>
-          </div>
-        )}
+        {error && <Error message="Todos los campos son obligatorios" />}
 
         <div className="mb-5">
           <label
