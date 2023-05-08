@@ -1,9 +1,32 @@
+import Swal from "sweetalert2";
+
 const Paciente = ({ patient, setPatient, deletePatient }) => {
+  const deleteAlert = () => {
+    Swal.fire({
+      title: "Eliminar",
+      text: `¿Desea eliminar el paciente: ${patient.name}, Propietario: ${patient.owner}? `,
+      icon: "warning",
+
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si",
+    }).then((result) => {
+      if (result.value) {
+        Swal.fire(
+          "Eliminado",
+          "El paciente ha sido eliminado con éxito",
+          "success"
+        );
+        deletePatient(patient.id);
+      }
+    });
+  };
+
   const handleDeletePatient = () => {
-    const response = confirm("Deseas eleminar este paciente?");
-    if (response) {
-      deletePatient(patient.id);
-    }
+    deleteAlert();
+
+    // deletePatient(patient.id);
   };
   return (
     <div className="mx-5 my-10 bg-white shadow-md px-5 py-10 rounded-xl">
