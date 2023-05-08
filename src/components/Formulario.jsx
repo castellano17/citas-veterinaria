@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Error from "./Error";
+import Swal from "sweetalert2";
 
 const Formulario = ({ patients, setPatients, patient, setPatient }) => {
   const [name, setName] = useState("");
@@ -20,6 +21,25 @@ const Formulario = ({ patients, setPatients, patient, setPatient }) => {
     }
   }, [patient]);
 
+  const showAlert = (type, message) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+
+    Toast.fire({
+      icon: type,
+      title: message,
+    });
+  };
+
   const generateId = () => {
     const ramdom = Math.random().toString(36).substring(2);
     const date = Date.now().toString(36);
@@ -33,7 +53,7 @@ const Formulario = ({ patients, setPatients, patient, setPatient }) => {
     //Validación del formulario
 
     if ([name, owner, email, date, symptom].includes("")) {
-      setError(true);
+      showAlert("error", "Todos los campos son obligatorios");
       return;
     }
 
@@ -58,10 +78,13 @@ const Formulario = ({ patients, setPatients, patient, setPatient }) => {
       );
       setPatients(patientUpdated);
       setPatient({});
+      showAlert("success", "Paciente editado con éxito");
     } else {
       // Nuevo registro
       objPatient.id = generateId();
       setPatients([...patients, objPatient]);
+
+      showAlert("success", "Paciente agregado con éxito");
     }
 
     // Reiniciar el form
