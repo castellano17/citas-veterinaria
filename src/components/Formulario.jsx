@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Error from "./Error";
 
-const Formulario = ({ patients, setPatients }) => {
+const Formulario = ({ patients, setPatients, patient, setPatient }) => {
   const [name, setName] = useState("");
   const [owner, setOwner] = useState("");
   const [email, setEmail] = useState("");
@@ -9,6 +9,16 @@ const Formulario = ({ patients, setPatients }) => {
   const [symptom, setSymptom] = useState("");
 
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (Object.keys(patient).length > true) {
+      setName(patient.name);
+      setOwner(patient.owner);
+      setEmail(patient.email);
+      setDate(patient.date);
+      setSymptom(patient.symptom);
+    }
+  }, [patient]);
 
   const generateId = () => {
     const ramdom = Math.random().toString(36).substring(2);
@@ -37,9 +47,22 @@ const Formulario = ({ patients, setPatients }) => {
       email,
       date,
       symptom,
-      id: generateId(),
     };
-    setPatients([...patients, objPatient]);
+
+    if (patient.id) {
+      // Editando el Registro
+      objPatient.id = patient.id;
+
+      const patientUpdated = patients.map((patientState) =>
+        patientState.id === patient.id ? objPatient : patientState
+      );
+      setPatients(patientUpdated);
+      setPatient({});
+    } else {
+      // Nuevo registro
+      objPatient.id = generateId();
+      setPatients([...patients, objPatient]);
+    }
 
     // Reiniciar el form
 
@@ -155,7 +178,7 @@ const Formulario = ({ patients, setPatients }) => {
         <input
           type="submit"
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-all"
-          value="Agregar Paciente"
+          value={patient.id ? "Editar Paciente" : "Agregar Paciente"}
         />
       </form>
     </div>
